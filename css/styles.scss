@@ -1,0 +1,47 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../node_modules/bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+$link-decoration: none;
+
+// 3. Include remainder of required Bootstrap stylesheets
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+$custom-colors: (
+	"farve": $cyan-400,
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "bootstrapComponents";
+
+// 5. Du kan lave styling her...
+#list textarea{
+	all: unset;
+	color: $light;
+}
+
+#list .note{
+	background-color: $gray-800;
+	width: max-content;
+	border-top: 30px solid $yellow-500;
+	border-radius: 10px;
+	box-shadow: 0 20px 50px $dark;
+	padding: 10px;
+	position: absolute;
+	top: 75px;
+	left: 50px;
+}
+#list .note span{
+	position: absolute;
+	bottom: 100%;
+	right: 0;
+	height: 30px;
+	font-family: cursive;
+	font-size: large;
+	padding-right: 10px;
+	cursor: pointer;
+	color: $dark;
+}

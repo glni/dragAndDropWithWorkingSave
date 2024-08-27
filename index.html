@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    
+    <title>Sigende titel</title>
+    
+    <meta name="robots" content="All">
+    <meta name="author" content="Udgiver">
+    <meta name="copyright" content="Information om copyright">
+    
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body class="bg-dark-subtle">
+
+<main class="vw-100 vh-100 overflow-hidden position-relative">
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <div class="col-sm-4">
+                <div class="input-group">
+                    <input type="color" class="form-control form-control-color" id="color" value="#e6b905" title="Choose your color">
+                    <button type="button" id="createBtn" class="btn btn-success px-3">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="list"></div>
+</main>
+
+<script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const color = document.querySelector('#color');
+    const createBtn = document.querySelector('#createBtn');
+    const list = document.querySelector('#list');
+    
+    document.addEventListener('touchmove', (e) => e.preventDefault(), {passive: false});
+    
+   
+</script>
+</body>
+</html>
