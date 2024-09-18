@@ -2,15 +2,11 @@
 <html lang="da">
 <head>
     <meta charset="utf-8">
-    
     <title>Sigende titel</title>
-    
     <meta name="robots" content="All">
     <meta name="author" content="Udgiver">
     <meta name="copyright" content="Information om copyright">
-    
     <link href="css/styles.css" rel="stylesheet" type="text/css">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
@@ -36,10 +32,106 @@
     const color = document.querySelector('#color');
     const createBtn = document.querySelector('#createBtn');
     const list = document.querySelector('#list');
+    const savedItems = JSON.parse(localStorage.getItem('items')) || [];
     
-    document.addEventListener('touchmove', (e) => e.preventDefault(), {passive: false});
+    // Indlæs noter fra localStorage
+    if (savedItems.length > 0) {
+        savedItems.forEach(item => {
+            const note = createNoteElement(item.color, item.text, item.left, item.top);
+            list.appendChild(note);
+            setEventListeners(note);
+        });
+    }
     
-   
+    // Funktion til at skabe en note-element med position
+    function createNoteElement(colorValue, text = "", left = "0px", top = "0px") {
+        const note = document.createElement('div');
+        note.classList.add('note');
+        note.style.borderColor = colorValue;
+        note.style.position = "absolute"; // Sørg for at det er positioneret absolut
+        note.style.left = left;
+        note.style.top = top;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.textContent = 'x';
+        
+        const textarea = document.createElement('textarea');
+        textarea.placeholder = "Skriv her...";
+        textarea.rows = 10;
+        textarea.cols = 30;
+        textarea.value = text; // Sæt gemt tekst hvis tilgængelig
+        
+        note.append(closeBtn, textarea);
+        return note;
+    }
+    
+    createBtn.addEventListener('click', () => {
+        const note = createNoteElement(color.value);
+        list.appendChild(note);
+        setEventListeners(note);
+    });
+    
+    function start(e, note){
+        const elem = (e.type === "touchstart") ? e.touches[0] : e;
+        
+        note.dataset.cursorX = elem.clientX;
+        note.dataset.cursorY = elem.clientY;
+        
+        note.dataset.noteX = note.getBoundingClientRect().left.toString();
+        note.dataset.noteY = note.getBoundingClientRect().top.toString();
+        
+        note.dataset.dragging = 'yes';
+    }
+    
+    function move(e, note){
+        const elem = (e.type === "touchmove") ? e.touches[0] : e;
+        if(note.dataset.dragging === 'no'){
+            return;
+        }
+        
+        const distanceX = elem.clientX - parseInt(note.dataset.cursorX);
+        const distanceY = elem.clientY - parseInt(note.dataset.cursorY);
+        
+        note.style.left = parseInt(note.dataset.noteX) + distanceX + "px";
+        note.style.top = parseInt(note.dataset.noteY) + distanceY + "px";
+        note.style.cursor = 'grab';
+    }
+    
+    function end(note){
+        note.dataset.dragging = 'no';
+        note.style.cursor = 'auto';
+        saveNotes(); // Gem efter endt trækning
+    }
+    
+    function removeNote(note){
+        note.remove();
+        saveNotes();
+    }
+    
+    function saveNotes(){
+        const notes = Array.from(list.children).map(note => {
+            return {
+                color: note.style.borderColor,
+                text: note.querySelector('textarea').value,
+                left: note.style.left,   // Gem venstre position
+                top: note.style.top      // Gem top position
+            };
+        });
+        localStorage.setItem('items', JSON.stringify(notes));
+    }
+    
+    function setEventListeners(note){
+        const closeBtn = note.querySelector('span');
+        closeBtn.addEventListener('click', () => removeNote(note));
+        
+        note.addEventListener('mousemove', (e) => move(e, note));
+        note.addEventListener('mousedown', (e) => start(e, note));
+        note.addEventListener('mouseup', () => end(note));
+        
+        note.addEventListener('touchmove', (e) => move(e, note));
+        note.addEventListener('touchstart', (e) => start(e, note));
+        note.addEventListener('touchend', () => end(note));
+    }
 </script>
 </body>
 </html>
